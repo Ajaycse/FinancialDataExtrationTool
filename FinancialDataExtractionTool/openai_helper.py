@@ -2,10 +2,12 @@ from openai import OpenAI
 import json
 import pandas as pd
 import os
-
-client = OpenAI(api_key=os.environ['OPEN_AI_KEY'])
+# Ensure you have set the environment variable OPEN_AI_KEY with your OpenAI API key
+if 'OPEN_AI_KEY' not in os.environ:
+    raise EnvironmentError("Please set the environment variable OPEN_AI_KEY with your OpenAI API key.")
 
 def extract_financial_data(text):
+    client = OpenAI(api_key=os.environ['OPEN_AI_KEY'])
     prompt = get_prompt_financial() + text
     response = client.chat.completions.create(model="gpt-3.5-turbo",
     messages=[{"role": "user","content": prompt}])
@@ -48,8 +50,8 @@ def get_prompt_financial():
 if __name__ == '__main__':
     text = '''
     Tesla's Earning news in text format: Tesla's earning this quarter blew all the estimates. 
-    They reported 4.5 billion $ profit against a revenue of 30 billion $. 
-    Their earnings per share was 2.3 $
+    They reported 4.5 billion $ profit against a revenue of 30 billion $. Their earnings per 
+    share was 2.3 $
     '''
     df = extract_financial_data(text)
 
