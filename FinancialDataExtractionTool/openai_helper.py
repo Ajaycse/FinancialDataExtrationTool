@@ -1,17 +1,15 @@
-import openai
+from openai import OpenAI
 import json
 import pandas as pd
 import os
 
-openai.api_key = os.environ['OPEN_AI_KEY']
+client = OpenAI(api_key=os.environ['OPEN_AI_KEY'])
 
 def extract_financial_data(text):
     prompt = get_prompt_financial() + text
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user","content": prompt}]
-    )
-    content = response.choices[0]['message']['content']
+    response = client.chat.completions.create(model="gpt-3.5-turbo",
+    messages=[{"role": "user","content": prompt}])
+    content = response.choices[0].message.content
 
     try:
         data = json.loads(content)
@@ -49,7 +47,9 @@ def get_prompt_financial():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     text = '''
-    Tesla's Earning news in text format: Tesla's earning this quarter blew all the estimates. They reported 4.5 billion $ profit against a revenue of 30 billion $. Their earnings per share was 2.3 $
+    Tesla's Earning news in text format: Tesla's earning this quarter blew all the estimates. 
+    They reported 4.5 billion $ profit against a revenue of 30 billion $. 
+    Their earnings per share was 2.3 $
     '''
     df = extract_financial_data(text)
 
